@@ -1,37 +1,19 @@
 ---
-- name: Provision ec2 instances based on the environment
+- name: Stop aws instances
   hosts: localhost
-  connection: local
-  gather_facts: False
-
-  vars_files:
-    - vars/dev-environment.yml
-    - vars/aws-creds.yml
-
+  gather_facts: false
+  vars:
+    instance_ids:
+      - 'i-xxxxxx'
+      - 'i-xxxxxx'
+      - 'i-xxxxxx'
+    region: us-east-1
   tasks:
-
-  - name: Create required security groups
-    ec2_group:
-      name: "{{ item.name }}"
-      description: "{{ item.desc }}"
-      rules: "{{ item.rules }}"
-      region: "{{ ec2_region }}"
-      ec2_access_key: "{{ ec2_access_key }}"
-      ec2_secret_key: "{{ ec2_secret_key }}"
-    with_items: "{{security_groups}}"
-
-  - name: Launch instances
-    ec2: 
-      region: "{{ ec2_region }}"
-      ec2_access_key: "{{ ec2_access_key }}"
-      ec2_secret_key: "{{ ec2_secret_key }}"
-      keypair: "{{ item.keypair }}"
-      group: "{{ item.group }}"
-      instance_type: "{{ item.instance_type }}"
-      image: "{{ item.image }}"
-      instance_tags: "{{ item.instance_tags }}"
-      exact_count: "{{ item.exact_count }}"
-      count_tag: "{{ item.count_tag }}"
-      wait: true
-    register: ec2
-    with_items: "{{ec2_instances}}"
+    - name: Stop the aws instances
+      ec2:
+        instance_ids: '{{ instance_ids }}'
+        region: '{{ region }}'
+        state: stopped
+        wait: True
+        vpc_subnet_id: subnet-29e63245
+        assign_public_ip: yes
