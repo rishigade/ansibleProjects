@@ -1,5 +1,5 @@
 ---
-- name: Stop aws instances
+- name: launch aws instances
   hosts: localhost
   gather_facts: false
   vars:
@@ -9,7 +9,7 @@
       - 'i-xxxxxx'
     region: us-east-1
   tasks:
-    - name: Stop the aws instances
+    - name: launch the aws instances
       ec2:
         instance_ids: '{{ instance_ids }}'
         region: '{{ region }}'
